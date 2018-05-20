@@ -6,9 +6,14 @@
 '''
 
 from flask import Flask
+from jobplus.models import db
+from jobplus.config import configs
+
 
 def create_app():
     app = Flask(__name__)
+    app.config.from_object(configs.get('development'))
+    db.init_app(app)
     return app
 
 
