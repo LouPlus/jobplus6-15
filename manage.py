@@ -4,13 +4,8 @@
 '''
 # TODO 实现 manage.py 模块
 from jobplus.app import create_app
-from flask import render_template
 
-app = create_app()
-
-@app.route('/')
-def index():
-    return render_template('base.html')
+app = create_app('development')
 
 if __name__ == '__main__':
     app.run()
