@@ -39,3 +39,8 @@ a:visited {
   color: #333;
   text-decoration: none !important;
 }
+
+.form {
+	width: 400px;
+	margin: 0 auto;
+}
