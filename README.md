@@ -27,6 +27,7 @@ id|Integer|求职者id
 user_id|Integer|用户id
 name|String(128)|用户名
 phone|Integer|手机号
+work_year|Integer|工作年限
 resume_uri|String(256)|简历链接
 created_time|DateTime|创建时间
 updated_time|DateTime|更新时间
