@@ -5,6 +5,7 @@
 # TODO 实现 models.py 文件
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_login import UserMixin
 
 
 db = SQLAlchemy()
@@ -16,7 +17,7 @@ class BaseModel(db.Model):
     updated_time = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-class User(BaseModel):
+class User(BaseModel, UserMixin):
     __tablename__ = 'user'
     role = db.Column(db.Integer, default=0, nullable=False)
     email = db.Column(db.String(128), nullable=False)
@@ -29,6 +30,7 @@ class Seeker(BaseModel):
     user = db.relationship('User', backref=db.backref('seeker', uselist=False), uselist=False )
     name = db.Column(db.String(128))
     phone = db.Column(db.Integer)
+    work_year = db.Column(db.Integer)
     resume_uri = db.Column(db.String(256))
 
 class Company(BaseModel):
