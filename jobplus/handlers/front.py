@@ -21,9 +21,9 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         login_user(user, form.remember_me.data)
         next = 'user.profile'
-	#if user.is_admin:
-	#    next = 'admin.index'
-	#elif user.is_company:
-	#    next = 'company.profile'
+        if user.is_admin:
+            next = 'admin.index'
+        elif user.is_company:
+            next = 'company.profile'
         return redirect(url_for(next))
     return render_template('login.html', form=form)
