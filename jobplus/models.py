@@ -6,6 +6,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 db = SQLAlchemy()
@@ -19,9 +20,36 @@ class BaseModel(db.Model):
 
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
-    role = db.Column(db.Integer, default=0, nullable=False)
-    email = db.Column(db.String(128), nullable=False)
-    password = db.Column(db.String(128), nullable=False)
+
+    ROLE_USER = 0
+    ROLE_COMPANY = 20
+    ROLE_ADMIN = 30
+
+    role = db.Column(db.SmallInteger, default=ROLE_USER)
+    email = db.Column(db.String(128), unique=True, index=True,nullable=False)
+    _password = db.Column('password', db.String(128), nullable=False)
+
+    def __repr__(self):
+        return '<User:{}>'.format(self.username)
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, orig_password):
+        self._password = generate_password_hash(orig_password)
+
+    def check_password(self, password):
+        return check_password_hash(self._password, password)
+
+    @property
+    def is_admin(self):
+        return self.role == self.ROLE_ADMIN
+
+    @property
+    def is_company(self):
+        return self.role == self.ROLE_COMPANY
 
 
 class Seeker(BaseModel):
