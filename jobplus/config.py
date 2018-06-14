@@ -7,12 +7,12 @@ App配置文件
 class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'joyccaacca'
-    INDEX_PER_PAGE = 9
+    INDEX_PER_PAGE = 12
     ADMIN_PER_PAGE = 15
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = 1
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:123@localhost:3306/jobplus?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@localhost:3306/jobplus?charset=utf8'
 
 
 class ProductionConfig(BaseConfig):

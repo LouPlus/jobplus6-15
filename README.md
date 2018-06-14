@@ -59,19 +59,12 @@ title|String(128)|
 salary_max|Integer|
 salary_min|Integer|
 experience|Integer|
+location|String(128)|职位地点
+tags|String(128)|标签
 education|String(128)|
 created_time|DateTime|创建时间
 updated_time|DateTime|更新时间
 
-
-#### Tag 标签表
-field name|type|desc|notes
-:-:|:-:|:-:|:--
-id|Integer|标签id
-job_id|Integer|职位id
-name|String(128)|职位名称
-created_time|DateTime|创建时间
-updated_time|DateTime|更新时间
 
 #### Delivery 简历投递表
 field name|type|desc|notes

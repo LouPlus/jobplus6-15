@@ -18,6 +18,13 @@ class BaseModel(db.Model):
     updated_time = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+user_job = db.Table(
+    'user_job',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
+    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'))
+)
+
+
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
 
@@ -29,8 +36,11 @@ class User(BaseModel, UserMixin):
     email = db.Column(db.String(128), unique=True, index=True,nullable=False)
     _password = db.Column('password', db.String(128), nullable=False)
 
+    collect_jobs = db.relationship('Job', secondary=user_job)
+    company = db.relationship('Company', uselist=False)
+
     def __repr__(self):
-        return '<User:{}>'.format(self.username)
+        return '<User:{}>'.format(self.email)
 
     @property
     def password(self):
@@ -62,34 +72,41 @@ class Seeker(BaseModel):
     resume_uri = db.Column(db.String(256))
 
 class Company(BaseModel):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('company',uselist=False), uselist=False)
+    __tablename__ = 'company'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
+    user = db.relationship('User', uselist=False, backref=db.backref('companys', uselist=False))
     name = db.Column(db.String(128))
     website = db.Column(db.String(256))
     logo_uri = db.Column(db.String(256))
     introduction = db.Column(db.String(256))
     description = db.Column(db.Text)
     domain = db.Column(db.String(128))
-    finance = db.Column(db.Integer)
+    finance = db.Column(db.String(128))
     city = db.Column(db.String(128))
+
+    def __repr__(self):
+        return '<company {}>'.format(self.user_id)
 
 class Job(BaseModel):
     __tablename__ = 'job'
-    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))
-    company = db.relationship('Company', backref=db.backref('jobs'), uselist=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    company = db.relationship('User', uselist=False, backref=db.backref('jobs', lazy='dynamic'))
     title = db.Column(db.String(128))
     description = db.Column(db.Text)
     address = db.Column(db.String(256))
     salary_max = db.Column(db.Integer)
     salary_min = db.Column(db.Integer)
-    experience = db.Column(db.Integer)
+    location = db.Column(db.String(128))
+    experience = db.Column(db.String(128))
     education = db.Column(db.String(128))
-    tags = db.relationship('Tag', backref='job')
+    tags = db.Column(db.String(128))
 
-class Tag(BaseModel):
-    __tablename__ = 'tag'
-    job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
-    name = db.Column(db.String(128))
+    def __repr__(self):
+        return '<Job {}>'.format(self.company_id)
+
+    @property
+    def tag_list(self):
+        return self.tags.split(',')
 
 class Delivery(BaseModel):
     __tablename__ = 'delivery'
