@@ -5,8 +5,23 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from jobplus.forms import CompanyProfileForm
 from flask_login import login_required, current_user
+from jobplus.models import User
+
 
 company = Blueprint('company', __name__, url_prefix='/company')
+
+
+@company.route('/')
+def index():
+    page = request.args.get('page', default=1, type=int)
+    pagination = User.query.filter(
+        User.role==User.ROLE_COMPANY
+    ).order_by(User.created_time.desc()).paginate(
+        page=page,
+        per_page=current_app.config['INDEX_PER_PAGE'],
+        error_out=False
+    )
+    return render_template('company/index.html', pagination=pagination, active='company')
 
 
 @company.route('/profile', methods=['GET', 'POST'])

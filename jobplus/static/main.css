@@ -28,9 +28,6 @@
 	padding: 10px 100px;
 }
 
-.company-list {
-	text-align: center;	
-}
 
 a,
 a:hover,
@@ -43,4 +40,13 @@ a:visited {
 .form {
 	width: 400px;
 	margin: 0 auto;
+}
+
+.nav-pagination {
+  text-align: center;
+  clear: both;
+}
+
+.company-item {
+  text-align: center;
 }
