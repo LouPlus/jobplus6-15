@@ -35,7 +35,7 @@ class LagouSpider(object):
 
     @property
     def company(self):
-        for page in range(2, 4):
+        for page in range(2, 3):
             r = requests.get(self.url, headers=self.headers, data=self.formdata(page))
             result = r.json()['result']
             for company in result:
@@ -77,7 +77,7 @@ class FakerData(object):
 
     def fake_job(self):
         companies = User.query.filter_by(role=User.ROLE_COMPANY).all()
-        for i in range(100):
+        for i in range(50):
             company = random.choice(companies)
             job = Job(
                 title=fake.word() + '工程师',

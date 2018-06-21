@@ -37,6 +37,10 @@ a:visited {
   text-decoration: none !important;
 }
 
+.list-more a {
+  color: #FFFFFF;
+}
+
 .form {
 	width: 400px;
 	margin: 0 auto;

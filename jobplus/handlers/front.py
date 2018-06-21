@@ -3,7 +3,7 @@
 '''
 # TODO 实现front.py 文件
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
-from jobplus.models import User
+from jobplus.models import User, Job
 from jobplus.forms import LoginForm
 from flask_login import login_user, logout_user, login_required
 
@@ -11,8 +11,16 @@ front = Blueprint('front', __name__)
 
 @front.route('/')
 def index():
-    return render_template('index.html')
-
+    newest_jobs = Job.query.order_by(Job.created_time.desc()).limit(12)
+    newest_companies = User.query.filter(
+        User.role==User.ROLE_COMPANY
+    ).order_by(User.created_time.desc()).limit(12)
+    return render_template(
+        'index.html',
+        active='index',
+        newest_jobs=newest_jobs,
+        newest_companies=newest_companies,
+    )
 
 @front.route('/login', methods=['GET', 'POST'])
 def login():
