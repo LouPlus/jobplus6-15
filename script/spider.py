@@ -51,7 +51,7 @@ class FakerData(object):
 
         for company in self.lagou.company:
             c = User(
-                #name=company['companyShortName'],
+                name=company['companyShortName'],
                 email=fake.email(),
                 role=User.ROLE_COMPANY
             )

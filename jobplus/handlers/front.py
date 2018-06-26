@@ -27,11 +27,23 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        login_user(user, form.remember_me.data)
-        next = 'user.profile'
-        if user.is_admin:
-            next = 'admin.index'
-        elif user.is_company:
-            next = 'company.profile'
-        return redirect(url_for(next))
+        if user.is_disable:
+            flash('用户已经被禁用', 'warning')
+            return redirect(url_for('front.login'))
+        else:
+            login_user(user, form.remember_me.data)
+            next = 'user.profile'
+            if user.is_admin:
+                next = 'admin.users'
+            elif user.is_company:
+                next = 'company.profile'
+            return redirect(url_for(next))
     return render_template('login.html', form=form)
+
+
+@front.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('您已经退出登录', 'success')
+    return redirect(url_for('.index'))
