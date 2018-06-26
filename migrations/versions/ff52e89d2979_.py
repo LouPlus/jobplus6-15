@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5a8124e37efd
+Revision ID: ff52e89d2979
 Revises: 
-Create Date: 2018-06-14 10:37:29.021680
+Create Date: 2018-06-25 18:18:32.899982
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5a8124e37efd'
+revision = 'ff52e89d2979'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,11 +23,15 @@ def upgrade():
     sa.Column('created_time', sa.DateTime(), nullable=True),
     sa.Column('updated_time', sa.DateTime(), nullable=True),
     sa.Column('role', sa.SmallInteger(), nullable=True),
+    sa.Column('name', sa.String(length=32), nullable=False),
     sa.Column('email', sa.String(length=128), nullable=False),
     sa.Column('password', sa.String(length=128), nullable=False),
+    sa.Column('phone', sa.String(length=11), nullable=True),
+    sa.Column('is_disable', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
+    op.create_index(op.f('ix_user_name'), 'user', ['name'], unique=True)
     op.create_table('company',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_time', sa.DateTime(), nullable=True),
@@ -67,7 +71,6 @@ def upgrade():
     sa.Column('updated_time', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('name', sa.String(length=128), nullable=True),
-    sa.Column('phone', sa.Integer(), nullable=True),
     sa.Column('work_year', sa.Integer(), nullable=True),
     sa.Column('resume_uri', sa.String(length=256), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
@@ -100,6 +103,7 @@ def downgrade():
     op.drop_table('seeker')
     op.drop_table('job')
     op.drop_table('company')
+    op.drop_index(op.f('ix_user_name'), table_name='user')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
     # ### end Alembic commands ###

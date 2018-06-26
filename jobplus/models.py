@@ -33,11 +33,16 @@ class User(BaseModel, UserMixin):
     ROLE_ADMIN = 30
 
     role = db.Column(db.SmallInteger, default=ROLE_USER)
+    name = db.Column(db.String(32), unique=True, index=True, nullable=False)
     email = db.Column(db.String(128), unique=True, index=True,nullable=False)
     _password = db.Column('password', db.String(128), nullable=False)
 
+    phone = db.Column(db.String(11))
+
     collect_jobs = db.relationship('Job', secondary=user_job)
     company = db.relationship('Company', uselist=False)
+
+    is_disable = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<User:{}>'.format(self.email)
@@ -67,7 +72,6 @@ class Seeker(BaseModel):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=db.backref('seeker', uselist=False), uselist=False )
     name = db.Column(db.String(128))
-    phone = db.Column(db.Integer)
     work_year = db.Column(db.Integer)
     resume_uri = db.Column(db.String(256))
 
