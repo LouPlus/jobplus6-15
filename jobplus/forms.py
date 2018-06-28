@@ -33,7 +33,7 @@ class RegisterForm(FlaskForm):
     repeat_password = PasswordField('重复密码', validators=[Required(), EqualTo('password')])
     submit = SubmitField('提交')
 
-    def validate_username(self, field):
+    def validate_name(self, field):
         if User.query.filter_by(name=field.data).first():
             raise ValidationError('用户名已存在')
 
