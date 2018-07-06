@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: ff52e89d2979
+Revision ID: 9939f4b09b17
 Revises: 
-Create Date: 2018-06-25 18:18:32.899982
+Create Date: 2018-07-06 10:06:36.967891
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ff52e89d2979'
+revision = '9939f4b09b17'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -62,6 +62,7 @@ def upgrade():
     sa.Column('experience', sa.String(length=128), nullable=True),
     sa.Column('education', sa.String(length=128), nullable=True),
     sa.Column('tags', sa.String(length=128), nullable=True),
+    sa.Column('is_disable', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['company_id'], ['user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -77,14 +78,16 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('delivery',
-    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_time', sa.DateTime(), nullable=True),
     sa.Column('updated_time', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('job_id', sa.Integer(), nullable=True),
-    sa.Column('seeker_id', sa.Integer(), nullable=True),
-    sa.Column('status', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['job_id'], ['job.id'], ),
-    sa.ForeignKeyConstraint(['seeker_id'], ['seeker.id'], ),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('company_id', sa.Integer(), nullable=True),
+    sa.Column('status', sa.SmallInteger(), nullable=True),
+    sa.Column('response', sa.String(length=256), nullable=True),
+    sa.ForeignKeyConstraint(['job_id'], ['job.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_job',

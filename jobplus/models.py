@@ -5,7 +5,7 @@
 # TODO 实现 models.py 文件
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -37,6 +37,7 @@ class User(BaseModel, UserMixin):
     email = db.Column(db.String(128), unique=True, index=True,nullable=False)
     _password = db.Column('password', db.String(128), nullable=False)
 
+    seeker = db.relationship('Seeker', uselist=False)
     phone = db.Column(db.String(11))
 
     collect_jobs = db.relationship('Job', secondary=user_job)
@@ -46,6 +47,12 @@ class User(BaseModel, UserMixin):
 
     def __repr__(self):
         return '<User:{}>'.format(self.email)
+
+    @property
+    def enable_jobs(self):
+        if not self.is_company:
+            raise AttributeError('User has no attribute enable_jobs')
+        return self.jobs.filter(Job.is_disable.is_(False))
 
     @property
     def password(self):
@@ -66,11 +73,15 @@ class User(BaseModel, UserMixin):
     def is_company(self):
         return self.role == self.ROLE_COMPANY
 
+    @property
+    def is_staff(self):
+        return self.role == self.ROLE_USER
+
 
 class Seeker(BaseModel):
     __tablename__ = 'seeker'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('seeker', uselist=False), uselist=False )
+    user = db.relationship('User', uselist=False)
     name = db.Column(db.String(128))
     work_year = db.Column(db.Integer)
     resume_uri = db.Column(db.String(256))
@@ -104,6 +115,7 @@ class Job(BaseModel):
     experience = db.Column(db.String(128))
     education = db.Column(db.String(128))
     tags = db.Column(db.String(128))
+    is_disable = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<Job {}>'.format(self.company_id)
@@ -112,10 +124,29 @@ class Job(BaseModel):
     def tag_list(self):
         return self.tags.split(',')
 
+    @property
+    def current_user_is_applied(self):
+        d = Delivery.query.filter_by(job_id=self.id, user_id=current_user.id).first()
+        return (d is not None)
+
 class Delivery(BaseModel):
     __tablename__ = 'delivery'
-    job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
-    job = db.relationship('Job', backref='deliverys', uselist=False)
-    seeker_id = db.Column(db.Integer, db.ForeignKey('seeker.id'))
-    seeker = db.relationship('Seeker', backref='deliverys', uselist=False)
-    status = db.Column(db.Integer)
+
+    STATUS_WAITING = 1
+    STATUS_REJECT = 2
+    STATUS_ACCEPT = 3
+
+    id = db.Column(db.Integer, primary_key=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id', ondelete='SET NULL'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
+    company_id = db.Column(db.Integer)
+    status = db.Column(db.SmallInteger, default=STATUS_WAITING)
+    response = db.Column(db.String(256))
+
+    @property
+    def user(self):
+        return User.query.get(self.user_id)
+
+    @property
+    def job(self):
+        return Job.query.get(self.job_id)

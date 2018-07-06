@@ -50,8 +50,8 @@
 <div class="col-sm-6 col-md-4">
   <div class="job-box">
       <div class="caption">
-        <a href="#">
-        <b>{{ job.title }}</b><span class="timesince">[2月前]</span>
+        <a href="{{ url_for('job.detail', job_id=job.id) }}">
+        <b>{{ job.title }}</b><span class="timesince">[{{ job.created_time | timesince }}]</span>
         <p>经验{{ job.experience }} {% if job.experience != '不限' %}年{% endif %} 学历{{ job.education }}</p>
 
         {% for tag in job.tag_list %}
@@ -63,12 +63,12 @@
       <hr>
       <div class="media">
         <div class="media-left">
-          <a href="#">
+          <a href="{{ url_for('company.detail', company_id=job.company.id) }}">
           <img class="media-object" src="{{ job.company.company.logo_uri }}" width="40" height="40" alt="...">
           </a>
           </div>
           <div class="media-body">
-          <a href="#">
+          <a href="{{ url_for('company.detail', company_id=job.company.id) }}">
           <h4 class="media-heading">{{ job.company.company.name }}</h4>
           </a>
           <span class="company-meta">{{ job.company.company.domain }}/{{ job.company.company.finance }}/{{ job.location }}</span>
@@ -82,13 +82,13 @@
 {% macro render_company(company) %}
 <div class="col-sm-6 col-md-3 company-item">
   <div class="thumbnail">
-    <a href="#">
+    <a href="{{ url_for('company.detail', company_id=company.id) }}">
       <img src="{{ company.company.logo_uri }}" width="100" height="100" alt="...">
       <h3>{{ company.company.name }}</h3>
       <p>{{ company.company.domain }}</p>
     </a>
   <hr>
-  <a href="#">
+  <a href="{{ url_for('company.company_jobs', company_id=company.id) }}">
     <p>在招职位：{{ company.jobs.count() }}</p>
   </a>
   </div>
