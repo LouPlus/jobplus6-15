@@ -54,3 +54,48 @@ a:visited {
 .company-item {
   text-align: center;
 }
+
+.job-detail {
+  font-size: 15px;
+  margin-bottom: 50px;
+ }
+
+.job-salary {
+  color: #fd5f39;
+}
+
+.header {
+    padding: 0;
+}
+
+.job-meta,
+.timesince {
+  color: #FF8000;
+}
+
+.timesince {
+    font-size: 14px;
+}
+
+a.dilivery-btn {
+    padding: 10px 30px;
+    margin: 40px 0 0 0; 
+    color: #FFFFFF;
+}
+
+.company-detail {
+  margin: 30px 0;
+  font-size: 15px;
+ }
+
+.job-detail {
+  font-size: 15px;
+  margin-bottom: 50px;
+ }
+
+.job-item {
+    border: 1px solid #eee;
+    border-left: 5px solid #00b38a;
+    padding: 15px 10px;
+    margin-bottom: 15px;
+}

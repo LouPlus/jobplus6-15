@@ -6,7 +6,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError, TextAreaField, IntegerField
 from wtforms.validators import Length, Email, EqualTo, Required
-from jobplus.models import db, User, Company
+from jobplus.models import db, User, Company, Seeker
 from flask import flash
 
 class LoginForm(FlaskForm):
@@ -47,6 +47,9 @@ class RegisterForm(FlaskForm):
                     password=self.password.data)
         db.session.add(user)
         db.session.commit()
+        seeker = Seeker(user_id=user.id)
+        db.session.add(seeker)
+        db.session.commit()
         return user
 
 
@@ -56,8 +59,38 @@ class UserProfileForm(FlaskForm):
     password = PasswordField('密码（不填写保持不变）', validators=[Required(), Length(6, 24)])
     phone = StringField('手机号')
     work_year = IntegerField('工作年限')
-    resume_uri = StringField('简历地址')
+    #resume_uri = StringField('简历地址')
     submit = SubmitField('提交')
+
+
+    #def validate_phone(self, field):
+    #    phone = field.data
+    #    if phone[:2] not in ('13', '15', '18') and len(phone) != 11:
+    #        raise ValidationError('请输入有效的手机号')
+
+    #def upload_resume(self):
+    #    f = self.resume.data
+    #    filename = self.real_name.data + '.pdf'
+    #    f.save(os.path.join(
+    #        os.path.abspath(os.path.dirname(__file__)),
+    #        'static',
+    #        'resumes',
+    #        filename
+    #    ))
+    #    return filename
+
+    def update_profile(self, user):
+        #self.populate_obj(user)
+        user.seeker.name = self.name.data
+        user.email = self.email.data
+        if self.password.data:
+            user.password = self.password.data
+        user.phone = self.phone.data
+        user.seeker.work_year = self.work_year.data
+        #filename = self.upload_resume()
+        #user.resume_url = url_for('static', filename=os.path.join('resumes', filename))
+        db.session.add(user)
+        db.session.commit()
 
 
 class CompanyProfileForm(FlaskForm):
